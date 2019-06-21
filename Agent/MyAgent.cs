@@ -6,7 +6,6 @@ using SabberStoneCoreAi.Agent;
 using SabberStoneCoreAi.POGame;
 using SabberStoneCore.Tasks.PlayerTasks;
 using System.IO;
-using CsvHelper;
 using System;
 using System.Linq;
 using SabberStoneCore.Enums;
@@ -25,7 +24,7 @@ namespace SabberStoneCoreAi.Agent
 		{
 		}
 
-		public override void FinalizeGame(int marker )
+		public override void FinalizeGame( )
 		{
 		}
 
