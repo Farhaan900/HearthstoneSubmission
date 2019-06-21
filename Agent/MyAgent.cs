@@ -36,53 +36,47 @@ namespace SabberStoneCoreAi.Agent
 			Dictionary<PlayerTask, SabberStoneCoreAi.POGame.POGame> sim = poGame.Simulate(simulatedactions);
 
 			Dictionary<PlayerTask, SabberStoneCoreAi.POGame.POGame>.KeyCollection keyColl = sim.Keys;
-
-			foreach (PlayerTask key in keyColl)
-			{
-
-
-				//do something with simulated actions
-				//in case an EndTurn was simulated you need to set your own cards
-				//see POGame.prepareOpponent() for an example
-
-				//Console.WriteLine(key);
-
-			}
-
 			Dictionary<int, PlayerTask> scoresKeyPair = new Dictionary<int, PlayerTask>();
 			scoresKeyPair.Clear();
 
-			int maxScore = Int32.MinValue;
-			int _score = 0;
-
-			foreach (PlayerTask key in keyColl)
+			try
 			{
-				//Console.WriteLine(key);
-				//Console.WriteLine("Player num -->>>>"+poGame.CurrentPlayer.PlayerId);
-				//Console.WriteLine("SIM  -->>>>"+sim[key]);
 
+				int maxScore = Int32.MinValue;
+				int _score = 0;
 
-				if (sim[key] == null)
-					continue;
-
-				if (key.PlayerTaskType == PlayerTaskType.END_TURN)
+				foreach (PlayerTask key in keyColl)
 				{
-					_score = Int32.MinValue + 1;
+					//Console.WriteLine(key);
+					//Console.WriteLine("Player num -->>>>"+poGame.CurrentPlayer.PlayerId);
+					//Console.WriteLine("SIM  -->>>>"+sim[key]);
+
+
+					if (sim[key] == null)
+						continue;
+
+					if (key.PlayerTaskType == PlayerTaskType.END_TURN)
+					{
+						_score = Int32.MinValue + 1;
+					}
+
+					else
+						_score = Score(sim[key], poGame.CurrentPlayer.PlayerId);
+					//Console.WriteLine(_score);
+					if (!scoresKeyPair.ContainsKey(_score))
+						scoresKeyPair.Add(_score, key);
+					if (_score > maxScore)
+						maxScore = _score;
+
 				}
 
-				else
-					_score = Score(sim[key], poGame.CurrentPlayer.PlayerId);
-				//Console.WriteLine(_score);
-				if (!scoresKeyPair.ContainsKey(_score))
-					scoresKeyPair.Add(_score, key);
-				if (_score > maxScore)
-					maxScore = _score;
-
+				//Console.WriteLine("Played ==>> "+scoresKeyPair[maxScore]);
+				return scoresKeyPair[maxScore];
 			}
-
-			//Console.WriteLine("Played ==>> "+scoresKeyPair[maxScore]);
-			return scoresKeyPair[maxScore];
-			return poGame.CurrentPlayer.Options()[0];
+			catch
+			{
+				return poGame.CurrentPlayer.Options()[Rnd.Next(poGame.CurrentPlayer.Options().Count)];
+			}
 		}
 
 		private static int Score(POGame.POGame state, int playerId)
